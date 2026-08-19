@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Usuario')}"></head>
+<body>
+<div th:replace="~{fragments/header :: nav}"></div>
+<div class="container" style="max-width: 560px;">
+    <h1 class="mb-4" th:text="${usuario.id == null} ? 'Nuevo usuario' : 'Editar usuario'">Usuario</h1>
+
+    <!-- Alta -> POST /usuarios ; Edicion -> POST /usuarios/{id} -->
+    <form th:action="${usuario.id == null} ? @{/usuarios} : @{'/usuarios/' + ${usuario.id}}" method="post">
+
+        <div class="mb-3">
+            <label class="form-label">Nombre de usuario</label>
+            <input type="text" name="username" class="form-control" required
+                   th:value="${usuario.username}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control"
+                   th:required="${usuario.id == null}"
+                   th:placeholder="${usuario.id == null} ? '' : 'Dejar en blanco para conservar el actual'">
+            <div class="form-text" th:if="${usuario.id != null}">
+                Solo completa este campo si queres cambiar la contrasena.
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Nombre completo</label>
+            <input type="text" name="nombreCompleto" class="form-control" required
+                   th:value="${usuario.nombreCompleto}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control"
+                   th:value="${usuario.email}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Rol</label>
+            <select name="rol" class="form-select" required>
+                <option th:each="r : ${roles}"
+                        th:value="${r}"
+                        th:text="${r}"
+                        th:selected="${r.name() == usuario.rol}">Rol</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="/usuarios" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+</body>
+</html>

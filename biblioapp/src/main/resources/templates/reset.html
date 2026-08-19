@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Nueva contrasena')}"></head>
+<body>
+<div class="container" style="max-width: 420px; margin-top: 80px;">
+    <h2 class="mb-4">Elegir nueva contrasena</h2>
+
+    <!-- token vencido o invalido -->
+    <div th:if="${tokenInvalido}">
+        <div class="alert alert-danger">El enlace no es valido o ya expiro.</div>
+        <a href="/forgot" class="btn btn-primary">Pedir uno nuevo</a>
+    </div>
+
+    <!-- token valido: formulario -->
+    <form th:unless="${tokenInvalido}" th:action="@{/reset}" method="post">
+        <input type="hidden" name="token" th:value="${token}">
+        <div class="mb-3">
+            <label class="form-label">Nueva contrasena</label>
+            <input type="password" name="password" class="form-control" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Guardar contrasena</button>
+    </form>
+</div>
+</body>
+</html>

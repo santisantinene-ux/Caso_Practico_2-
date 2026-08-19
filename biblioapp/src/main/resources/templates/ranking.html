@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Ranking')}"></head>
+<body>
+<div th:replace="~{fragments/header :: nav}"></div>
+<div class="container">
+    <h1 class="mb-4">Libros mas prestados</h1>
+
+    <div th:if="${ranking == null or ranking.isEmpty()}" class="alert alert-info">
+        Todavia no hay prestamos registrados.
+    </div>
+
+    <!-- el primero es el maximo, lo usamos como 100% para las barras -->
+    <table th:if="${ranking != null and !ranking.isEmpty()}" class="table align-middle">
+        <thead>
+        <tr>
+            <th style="width: 3rem;">#</th>
+            <th>Libro</th>
+            <th style="width: 45%;">Prestamos</th>
+            <th style="width: 6rem;" class="text-end">Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="fila, iter : ${ranking}">
+            <td th:text="${iter.count}">1</td>
+            <td th:text="${fila.titulo}">Titulo</td>
+            <td>
+                <div class="progress" role="progressbar">
+                    <div class="progress-bar bg-primary"
+                         th:style="'width: ' + ${#numbers.formatDecimal(fila.cantidad * 100.0 / ranking[0].cantidad, 1, 0)} + '%'">
+                    </div>
+                </div>
+            </td>
+            <td class="text-end">
+                <span class="badge bg-primary" th:text="${fila.cantidad}">0</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

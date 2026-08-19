@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Acceso denegado')}"></head>
+<body>
+<div th:replace="~{fragments/header :: nav}"></div>
+<div class="container">
+    <div class="alert alert-danger">
+        <h1 class="h3">403 - Acceso denegado</h1>
+        <p class="mb-0">No tenes permiso para acceder a esta seccion. Esta operacion es
+            exclusiva del rol <strong>BIBLIOTECARIO</strong>.</p>
+    </div>
+    <a href="/libros" class="btn btn-secondary">Volver al catalogo</a>
+</div>
+</body>
+</html>

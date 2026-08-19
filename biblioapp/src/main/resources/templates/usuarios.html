@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Usuarios')}"></head>
+<body>
+<div th:replace="~{fragments/header :: nav}"></div>
+<div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Usuarios</h1>
+        <a href="/usuarios/nuevo" class="btn btn-primary">Nuevo usuario</a>
+    </div>
+
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div th:if="${usuarios == null or usuarios.isEmpty()}" class="alert alert-info">
+        No hay usuarios para mostrar.
+    </div>
+
+    <table th:if="${usuarios != null and !usuarios.isEmpty()}" class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Nombre completo</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${usuarios}">
+            <td th:text="${u.username}">usuario</td>
+            <td th:text="${u.nombreCompleto}">Nombre</td>
+            <td th:text="${u.email}">email</td>
+            <td>
+                <span class="badge"
+                      th:classappend="${u.rol == 'BIBLIOTECARIO'} ? 'bg-dark' : 'bg-secondary'"
+                      th:text="${u.rol}">Rol</span>
+            </td>
+            <td class="text-end">
+                <a th:href="@{'/usuarios/' + ${u.id} + '/editar'}" class="btn btn-outline-primary btn-sm">Editar</a>
+                <form th:action="@{'/usuarios/' + ${u.id} + '/eliminar'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

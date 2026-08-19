@@ -1,0 +1,18 @@
+# build de Maven
+biblioapp/target/
+
+# perfil local (H2) y seed de dev: no van a la entrega
+biblioapp/src/main/resources/application-local.properties
+biblioapp/seed-data-h2.sql
+
+# logs y temporales
+*.log
+
+# docs de trabajo (no son entregables del enunciado)
+PLAN.md
+PROPUESTA_BONUS.md
+caso_practico_2.md
+
+# secretos / variables de entorno
+*.env
+.env
