@@ -1,0 +1,189 @@
+{
+  "info": {
+    "name": "BiblioApp - Caso Practico 2",
+    "description": "Coleccion de pruebas de la API REST de BiblioApp. Autenticacion por JWT (bonus +10): la request de login (POST /api/auth/login) devuelve un token que se guarda en la variable de coleccion {{bibToken}} / {{lecToken}} y las siguientes lo mandan en el header Authorization: Bearer. La API es stateless, por eso no usa cookies ni CSRF. Base URL en {{baseUrl}} = http://localhost:8080. Se puede correr entera con 'Run collection'.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "bibToken", "value": "" },
+    { "key": "lecToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Login BIBLIOTECARIO (JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('200 OK', () => pm.response.to.have.status(200));",
+              "const token = pm.response.json().token;",
+              "pm.test('devuelve token', () => pm.expect(token).to.be.a('string').and.not.empty);",
+              "pm.collectionVariables.set('bibToken', token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"bibliotecaria1\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+        "description": "POST /api/auth/login -> 200 { token }. Guarda el JWT en {{bibToken}}. Captura 04-postman-login.png."
+      }
+    },
+    {
+      "name": "2. GET /api/libros (200, publico)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('200 OK', () => pm.response.to.have.status(200));",
+          "pm.test('es una lista', () => pm.expect(pm.response.json()).to.be.an('array'));"
+        ] } }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/libros", "host": ["{{baseUrl}}"], "path": ["api", "libros"] },
+        "description": "Catalogo completo en JSON. Publico, no requiere token. Captura 05-postman-api.png."
+      }
+    },
+    {
+      "name": "3. GET /api/libros/1 (200)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('200 OK', () => pm.response.to.have.status(200));"
+        ] } }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/libros/1", "host": ["{{baseUrl}}"], "path": ["api", "libros", "1"] },
+        "description": "Libro existente -> 200 con el libro en JSON."
+      }
+    },
+    {
+      "name": "4. GET /api/libros/9999 (404)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('404 Not Found', () => pm.response.to.have.status(404));"
+        ] } }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/libros/9999", "host": ["{{baseUrl}}"], "path": ["api", "libros", "9999"] },
+        "description": "Libro inexistente -> 404 Not Found (ResponseEntity.notFound())."
+      }
+    },
+    {
+      "name": "5. POST /api/libros como BIBLIOTECARIO (201)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('201 Created', () => pm.response.to.have.status(201));"
+        ] } }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{bibToken}}", "type": "string" } ] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Refactoring\",\n  \"autor\": \"Martin Fowler\",\n  \"isbn\": \"978-0134757599\",\n  \"categoria\": \"Tecnico\",\n  \"copiasTotales\": 3,\n  \"copiasDisponibles\": 3\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/libros", "host": ["{{baseUrl}}"], "path": ["api", "libros"] },
+        "description": "Con el JWT de bibliotecaria1 (ejecutar antes la request 1). Devuelve 201 Created."
+      }
+    },
+    {
+      "name": "6. POST /api/libros con JSON invalido (400)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('400 Bad Request', () => pm.response.to.have.status(400));"
+        ] } }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{bibToken}}", "type": "string" } ] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"\",\n  \"autor\": \"\",\n  \"isbn\": \"\",\n  \"categoria\": \"\",\n  \"copiasTotales\": 0,\n  \"copiasDisponibles\": -1\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/libros", "host": ["{{baseUrl}}"], "path": ["api", "libros"] },
+        "description": "Con JWT de bibliotecaria1 pero JSON que falla @Valid -> 400 Bad Request con { campo: mensaje }."
+      }
+    },
+    {
+      "name": "7. GET /api/prestamos/atrasados (200)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('200 OK', () => pm.response.to.have.status(200));"
+        ] } }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{bibToken}}", "type": "string" } ] },
+        "url": { "raw": "{{baseUrl}}/api/prestamos/atrasados", "host": ["{{baseUrl}}"], "path": ["api", "prestamos", "atrasados"] },
+        "description": "Con JWT de bibliotecaria1. Lista de prestamos atrasados (JPQL prestamosAtrasados()) en JSON. Captura 06-atrasados.png."
+      }
+    },
+    {
+      "name": "8. GET /api/prestamos/atrasados SIN token (401)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('401 Unauthorized', () => pm.response.to.have.status(401));"
+        ] } }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/prestamos/atrasados", "host": ["{{baseUrl}}"], "path": ["api", "prestamos", "atrasados"] },
+        "description": "Sin Authorization -> 401 (no autenticado). La API no redirige a /login."
+      }
+    },
+    {
+      "name": "9. Login LECTOR (JWT)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('200 OK', () => pm.response.to.have.status(200));",
+          "pm.collectionVariables.set('lecToken', pm.response.json().token);"
+        ] } }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"lector1\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] },
+        "description": "Login del lector para probar que la escritura de la API le da 403. Guarda el token en {{lecToken}}."
+      }
+    },
+    {
+      "name": "10. POST /api/libros como LECTOR (403)",
+      "event": [
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "pm.test('403 Forbidden', () => pm.response.to.have.status(403));"
+        ] } }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{lecToken}}", "type": "string" } ] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"titulo\": \"Intento no autorizado\",\n  \"autor\": \"Lector\",\n  \"isbn\": \"000-0000000000\",\n  \"categoria\": \"Ficcion\",\n  \"copiasTotales\": 1,\n  \"copiasDisponibles\": 1\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/libros", "host": ["{{baseUrl}}"], "path": ["api", "libros"] },
+        "description": "Con JWT de lector1 (ejecutar antes la request 9). @PreAuthorize bloquea -> 403 Forbidden (no 302)."
+      }
+    }
+  ]
+}
