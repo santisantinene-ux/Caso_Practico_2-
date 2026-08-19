@@ -16,7 +16,7 @@ public class Usuario {
     @Column(unique = true)
     private String username;
 
-    // @JsonIgnore para que la password nunca salga en el JSON de la API
+    // con @JsonIgnore la clave nunca aparece en el JSON de la API
     @JsonIgnore
     @NotBlank
     private String password;
@@ -29,7 +29,7 @@ public class Usuario {
     @NotBlank
     private String rol;
 
-    // antes de guardar, chequeo que el rol sea uno valido del enum
+    // antes de guardar reviso que el rol sea uno de los que existen
     @PrePersist
     @PreUpdate
     private void validarRol() {

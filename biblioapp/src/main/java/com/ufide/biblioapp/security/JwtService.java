@@ -27,7 +27,7 @@ public class JwtService {
     }
 
     public String generar(String username, Collection<? extends GrantedAuthority> authorities) {
-        // solo guardamos los que empiezan con ROLE_ (los demas no nos sirven)
+        // me quedo solo con los roles (los que empiezan con ROLE_)
         List<String> roles = authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .filter(a -> a.startsWith("ROLE_"))

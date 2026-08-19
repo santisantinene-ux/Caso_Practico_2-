@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-// aca va la logica de prestamos (no en el controller)
+// aca pongo toda la logica de los prestamos
 @Service
 public class PrestamoService {
 
@@ -44,7 +44,7 @@ public class PrestamoService {
         return prestamoRepository.findById(id).orElse(null);
     }
 
-    // @Transactional: guardar el prestamo y restar la copia van juntos
+    // lo pongo transactional para que guardar el prestamo y restar la copia pasen juntos
     @Transactional
     public Prestamo registrar(Libro libro, Usuario usuario) {
         // no se puede prestar si no quedan copias
@@ -72,7 +72,7 @@ public class PrestamoService {
         if (prestamo == null) {
             throw new IllegalArgumentException("Prestamo no encontrado: " + prestamoId);
         }
-        // si ya se devolvio no lo devuelvo de nuevo (sino sumaria copias de mas)
+        // si ya se devolvio no lo dejo devolver otra vez (sino sumaria copias de mas)
         if (prestamo.getFechaDevolucion() != null) {
             throw new IllegalStateException("Este prestamo ya fue devuelto.");
         }

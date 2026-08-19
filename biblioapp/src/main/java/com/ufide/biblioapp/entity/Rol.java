@@ -5,7 +5,7 @@ public enum Rol {
     BIBLIOTECARIO,
     LECTOR;
 
-    // true si el string coincide con alguno de los roles
+    // devuelve true si el texto coincide con alguno de los roles
     public static boolean esValido(String valor) {
         if (valor == null) {
             return false;

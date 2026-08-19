@@ -18,13 +18,13 @@ public class LibroRestController {
     @Autowired
     private LibroService libroService;
 
-    // GET /api/libros -> 200, catalogo completo. publico
+    // devuelve todos los libros, cualquiera lo puede ver
     @GetMapping
     public List<Libro> listar() {
         return libroService.listar();
     }
 
-    // 200 si existe, 404 si no
+    // busca un libro por id, si no existe devuelve 404
     @GetMapping("/{id}")
     public ResponseEntity<Libro> obtener(@PathVariable Long id) {
         return libroService.buscarPorId(id)
@@ -38,7 +38,7 @@ public class LibroRestController {
         return libroService.listarPorCategoria(categoria);
     }
 
-    // crear libro: solo bibliotecario. 201 ok, 400 si el json es invalido
+    // crea un libro nuevo, solo lo puede hacer el bibliotecario
     @PreAuthorize("hasRole('BIBLIOTECARIO')")
     @PostMapping
     public ResponseEntity<Libro> crear(@Valid @RequestBody Libro libro) {

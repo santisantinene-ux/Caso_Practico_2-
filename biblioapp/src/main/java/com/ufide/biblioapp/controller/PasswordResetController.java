@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-// pantallas de "olvide mi contrasena" (bonus). son publicas
+// las pantallas del "olvide mi contrasena" (bonus). cualquiera las puede ver
 @Controller
 public class PasswordResetController {
 
@@ -19,7 +19,7 @@ public class PasswordResetController {
         this.passwordResetService = passwordResetService;
     }
 
-    // form donde el usuario pone su correo
+    // pantalla donde el usuario escribe su correo
     @GetMapping("/forgot")
     public String formularioForgot() {
         return "forgot";
@@ -35,7 +35,7 @@ public class PasswordResetController {
         return "redirect:/forgot";
     }
 
-    // form para elegir la nueva contrasena; primero chequea que el token sirva
+    // pantalla para poner la nueva contrasena; antes reviso que el token sirva
     @GetMapping("/reset")
     public String formularioReset(@RequestParam String token, Model model) {
         if (!passwordResetService.tokenValido(token)) {

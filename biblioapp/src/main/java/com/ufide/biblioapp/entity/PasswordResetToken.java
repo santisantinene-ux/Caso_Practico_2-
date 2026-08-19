@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-// token de un solo uso para recuperar la contrasena (bonus)
+// token que se usa una sola vez para recuperar la contrasena (bonus)
 @Entity
 @Table(name = "password_reset_tokens")
 public class PasswordResetToken {
@@ -35,7 +35,7 @@ public class PasswordResetToken {
         this.fechaExpiracion = fechaExpiracion;
     }
 
-    // no sirve si ya se uso o si ya se vencio
+    // ya no sirve si se uso o si se paso la fecha
     @Transient
     public boolean isInvalido() {
         return usado || fechaExpiracion.isBefore(LocalDateTime.now());

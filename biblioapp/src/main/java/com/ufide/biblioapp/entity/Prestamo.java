@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
-// Un prestamo es de un libro y un usuario, con sus fechas
+// un prestamo tiene un libro, un usuario y las fechas
 @Entity
 @Table(name = "prestamos")
 public class Prestamo {
@@ -52,7 +52,7 @@ public class Prestamo {
     public LocalDate getFechaDevolucion() { return fechaDevolucion; }
     public void setFechaDevolucion(LocalDate fechaDevolucion) { this.fechaDevolucion = fechaDevolucion; }
 
-    // true si ya tiene fecha de devolucion
+    // devuelve true si ya tiene fecha de devolucion
     @Transient
     public boolean isDevuelto() {
         return fechaDevolucion != null;

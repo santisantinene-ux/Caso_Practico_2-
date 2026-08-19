@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface PasswordResetTokenRepository extends JpaRepository<PasswordResetToken, Long> {
 
-    // busca el token que llega en el link del correo
+    // busca el token que viene en el link del correo
     Optional<PasswordResetToken> findByToken(String token);
 }

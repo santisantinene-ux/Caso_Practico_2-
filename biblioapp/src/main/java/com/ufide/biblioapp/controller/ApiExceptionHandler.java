@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-// convierte los errores de @Valid de la API en un JSON { campo: mensaje } con 400
+// cuando falla la validacion de la API, devuelve los errores en un JSON
 @RestControllerAdvice(assignableTypes = {LibroRestController.class, PrestamoRestController.class, AuthController.class})
 public class ApiExceptionHandler {
 
-    // arma un mapa campo->mensaje con cada error de validacion
+    // guarda cada error como campo y su mensaje
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> manejarValidacion(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new HashMap<>();

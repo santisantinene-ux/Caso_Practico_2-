@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface LibroRepository extends JpaRepository<Libro, Long> {
 
-    // Spring Data arma la query sola a partir del nombre del metodo
+    // Spring arma la consulta solo con el nombre del metodo
     List<Libro> findByCategoriaIgnoreCase(String categoria);
 }

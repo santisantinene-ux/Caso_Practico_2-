@@ -8,7 +8,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-// si no hay SMTP configurado, el link se loguea en consola (modo demo)
+// si no hay correo configurado, el link se muestra en la consola para poder probar
 @Service
 public class EmailService {
 
@@ -27,7 +27,7 @@ public class EmailService {
         JavaMailSender mailSender = mailSenderProvider.getIfAvailable();
 
         if (mailSender == null) {
-            // Modo demo (sin SMTP configurado): dejamos el link en el log para poder probar.
+            // como no hay correo configurado, dejo el link en el log
             log.warn("[DEMO] spring.mail.* no configurado. Link de recuperacion para {}: {}",
                     destinatario, link);
             return;

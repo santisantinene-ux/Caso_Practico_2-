@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-// revisa el header Authorization en cada request de la API y autentica por token
+// revisa el token en cada llamada a la API para ver quien es el usuario
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -32,12 +32,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
 
-        // solo si viene "Bearer <token>" y todavia no hay nadie autenticado
+        // solo si viene el "Bearer <token>" y todavia no hay nadie logueado
         if (header != null && header.startsWith("Bearer ")
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
             String token = header.substring(7);
             try {
-                // valido la firma y saco el username y los roles del token
+                // saco el username y los roles que estan guardados en el token
                 Claims claims = jwtService.validar(token).getPayload();
                 String username = claims.getSubject();
 
@@ -53,7 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (JwtException | IllegalArgumentException e) {
-                // token invalido o expirado, no hacemos nada y seguimos sin autenticar
+                // si el token esta mal o vencido, no hago nada y sigue sin loguear
             }
         }
 

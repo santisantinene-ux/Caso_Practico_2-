@@ -12,7 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-// CRUD de usuarios (bonus). Todo el controller es solo para BIBLIOTECARIO
+// ABM de usuarios (bonus). todo esto es solo para el bibliotecario
 @Controller
 @RequestMapping("/usuarios")
 @PreAuthorize("hasRole('BIBLIOTECARIO')")
@@ -27,7 +27,7 @@ public class UsuarioController {
         return "usuarios";
     }
 
-    // Formulario de alta: usuario vacio + roles disponibles para el <select>.
+    // form para crear un usuario nuevo, le paso un usuario vacio y los roles
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("usuario", new Usuario());
@@ -35,7 +35,7 @@ public class UsuarioController {
         return "usuario-form";
     }
 
-    // Formulario de edicion: precargamos el usuario (nunca su hash en un campo).
+    // form para editar, ya con los datos del usuario cargados (menos la clave)
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model, RedirectAttributes ra) {
         Usuario usuario = usuarioService.buscarPorId(id);
@@ -48,7 +48,7 @@ public class UsuarioController {
         return "usuario-form";
     }
 
-    // Alta. El password es obligatorio al crear; se hashea en el service.
+    // crea el usuario. la clave es obligatoria y se encripta en el service
     @PostMapping
     public String crear(@RequestParam String username,
                         @RequestParam String password,
@@ -70,15 +70,15 @@ public class UsuarioController {
             usuarioService.crear(usuario);
             ra.addFlashAttribute("mensaje", "Usuario creado correctamente.");
             return "redirect:/usuarios";
-        } catch (IllegalArgumentException e) {              // rol invalido (validarRol)
+        } catch (IllegalArgumentException e) {              // el rol no es valido
             ra.addFlashAttribute("error", e.getMessage());
-        } catch (DataIntegrityViolationException e) {        // username duplicado
+        } catch (DataIntegrityViolationException e) {        // el username ya existe
             ra.addFlashAttribute("error", "El nombre de usuario ya existe.");
         }
         return "redirect:/usuarios/nuevo";
     }
 
-    // Edicion. Password opcional: en blanco conserva el actual.
+    // edita el usuario. si la clave va en blanco, se deja la que ya tenia
     @PostMapping("/{id}")
     public String actualizar(@PathVariable Long id,
                              @RequestParam String username,
@@ -104,8 +104,8 @@ public class UsuarioController {
         return "redirect:/usuarios/" + id + "/editar";
     }
 
-    // Baja. Guardas: no permitir eliminar la propia cuenta en sesion, y si el
-    // usuario tiene prestamos (FK) avisar en vez de reventar con un 500.
+    // borra el usuario. no dejo que se borre a si mismo, y si tiene prestamos
+    // muestro un aviso en vez de que tire error
     @PostMapping("/{id}/eliminar")
     public String eliminar(@PathVariable Long id, Authentication auth, RedirectAttributes ra) {
         Usuario objetivo = usuarioService.buscarPorId(id);

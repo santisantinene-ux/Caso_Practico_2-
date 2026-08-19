@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableMethodSecurity // activa los @PreAuthorize en los controllers
+@EnableMethodSecurity // para poder usar los @PreAuthorize en los controllers
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
@@ -38,7 +38,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // Cadena para la API: stateless con JWT, sin sesion ni CSRF
+    // reglas para la API, que usa el token JWT (no guarda sesion)
     @Bean
     @Order(1)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
@@ -60,7 +60,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Cadena para la web: login por formulario con sesion
+    // reglas para la parte web, con el login del formulario
     @Bean
     @Order(2)
     public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {

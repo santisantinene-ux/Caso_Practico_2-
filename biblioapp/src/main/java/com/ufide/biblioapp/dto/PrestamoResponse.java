@@ -4,7 +4,7 @@ import com.ufide.biblioapp.entity.Prestamo;
 
 import java.time.LocalDate;
 
-// lo que devuelve la API al crear un prestamo (asi no serializo la entidad y sus relaciones lazy)
+// lo que devuelve la API cuando se crea un prestamo, para no mandar la entidad entera
 public record PrestamoResponse(
         Long id,
         Long libroId,
@@ -15,7 +15,7 @@ public record PrestamoResponse(
         LocalDate fechaLimite,
         LocalDate fechaDevolucion) {
 
-    // arma el DTO a partir del prestamo
+    // copia los datos del prestamo a este objeto
     public static PrestamoResponse desde(Prestamo p) {
         return new PrestamoResponse(
                 p.getId(),

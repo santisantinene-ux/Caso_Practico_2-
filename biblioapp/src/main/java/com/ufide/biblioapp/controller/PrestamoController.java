@@ -26,7 +26,7 @@ public class PrestamoController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // lista de TODOS los prestamos: solo bibliotecario (son datos de todos)
+    // muestra todos los prestamos, solo el bibliotecario porque son de todos
     @PreAuthorize("hasRole('BIBLIOTECARIO')")
     @GetMapping
     public String listar(Model model) {
@@ -36,7 +36,7 @@ public class PrestamoController {
         return "prestamos";
     }
 
-    // lector: solo ve sus propios prestamos, busca el usuario logueado
+    // el lector solo ve sus prestamos, agarro el usuario que esta logueado
     @GetMapping("/mios")
     public String misPrestamos(Authentication auth, Model model) {
         Usuario usuario = usuarioService.buscarPorUsername(auth.getName());
@@ -45,7 +45,7 @@ public class PrestamoController {
         return "prestamos";
     }
 
-    // formulario para registrar un prestamo: solo bibliotecario
+    // form para registrar un prestamo, solo bibliotecario
     @PreAuthorize("hasRole('BIBLIOTECARIO')")
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
@@ -54,7 +54,7 @@ public class PrestamoController {
         return "prestamo-form";
     }
 
-    // guardar el prestamo: solo bibliotecario
+    // guarda el prestamo, solo bibliotecario
     @PreAuthorize("hasRole('BIBLIOTECARIO')")
     @PostMapping
     public String registrar(@RequestParam Long libroId,
@@ -75,7 +75,7 @@ public class PrestamoController {
         return "redirect:/prestamos";
     }
 
-    // marcar un prestamo como devuelto: solo bibliotecario
+    // marca un prestamo como devuelto, solo bibliotecario
     @PreAuthorize("hasRole('BIBLIOTECARIO')")
     @PostMapping("/{id}/devolver")
     public String devolver(@PathVariable Long id, RedirectAttributes ra) {

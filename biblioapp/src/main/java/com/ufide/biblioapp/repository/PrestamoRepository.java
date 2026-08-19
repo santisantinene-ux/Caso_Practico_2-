@@ -10,20 +10,20 @@ import java.util.List;
 
 public interface PrestamoRepository extends JpaRepository<Prestamo, Long> {
 
-    // libros mas prestados (bonus)
+    // los libros que mas se prestaron (bonus)
     @Query("SELECT new com.ufide.biblioapp.dto.LibroRanking(p.libro.titulo, COUNT(p)) "
             + "FROM Prestamo p GROUP BY p.libro ORDER BY COUNT(p) DESC")
     List<LibroRanking> ranking();
 
-    // todos los prestamos; JOIN FETCH para evitar el error de lazy en la vista
+    // trae todos los prestamos ya con su libro y su usuario cargados
     @Query("SELECT p FROM Prestamo p JOIN FETCH p.libro JOIN FETCH p.usuario ORDER BY p.fechaPrestamo DESC")
     List<Prestamo> findAllConLibroYUsuario();
 
-    // los prestamos de un solo usuario (para "mis prestamos" del lector)
+    // los prestamos de un solo usuario (para la pagina "mis prestamos")
     @Query("SELECT p FROM Prestamo p JOIN FETCH p.libro JOIN FETCH p.usuario WHERE p.usuario = :usuario ORDER BY p.fechaPrestamo DESC")
     List<Prestamo> findByUsuario(Usuario usuario);
 
-    // Requisito 5.3: prestamos sin devolver y con fecha limite vencida
+    // Requisito 5.3: prestamos que no se devolvieron y ya se les paso la fecha
     @Query("SELECT p FROM Prestamo p JOIN FETCH p.libro JOIN FETCH p.usuario "
             + "WHERE p.fechaDevolucion IS NULL AND p.fechaLimite < CURRENT_DATE "
             + "ORDER BY p.fechaLimite ASC")

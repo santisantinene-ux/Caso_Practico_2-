@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-// login de la API que devuelve un token JWT (bonus)
+// login de la API, devuelve un token JWT (bonus)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -30,11 +30,11 @@ public class AuthController {
         this.jwtService = jwtService;
     }
 
-    // POST /api/auth/login -> 200 con el token si el user/pass es correcto, 401 si no
+    // si el usuario y la clave estan bien devuelve el token, sino 401
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req) {
         try {
-            // uso el mismo AuthenticationManager que la web (valida con BCrypt)
+            // uso el mismo login que la web para chequear usuario y clave
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(req.username(), req.password()));
             String token = jwtService.generar(auth.getName(), auth.getAuthorities());

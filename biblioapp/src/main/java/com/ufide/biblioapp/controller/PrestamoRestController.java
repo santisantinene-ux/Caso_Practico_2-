@@ -30,16 +30,15 @@ public class PrestamoRestController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // GET /api/prestamos/atrasados -> 200. usa la consulta JPQL del Req 5.3.
-    // solo BIBLIOTECARIO puede ver prestamos ajenos
+    // lista los prestamos atrasados (Req 5.3). solo el bibliotecario los puede ver
     @PreAuthorize("hasRole('BIBLIOTECARIO')")
     @GetMapping("/atrasados")
     public List<Prestamo> atrasados() {
         return prestamoService.listarAtrasados();
     }
 
-    // registrar prestamo (bonus): 201 ok, 404 si no existe libro/usuario,
-    // 409 si no hay copias. devuelvo un DTO para no serializar las relaciones lazy
+    // registra un prestamo (bonus). devuelvo un DTO en vez de la entidad
+    // 404 si no existe el libro o el usuario, 409 si no quedan copias
     @PreAuthorize("hasRole('BIBLIOTECARIO')")
     @PostMapping
     public ResponseEntity<?> crear(@Valid @RequestBody PrestamoRequest req) {
@@ -53,7 +52,7 @@ public class PrestamoRestController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(PrestamoResponse.desde(guardado));
         } catch (IllegalStateException e) {
-            // no hay copias -> 409 conflicto
+            // no quedan copias, devuelvo 409
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }

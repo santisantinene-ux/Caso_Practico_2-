@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-// implementa UserDetailsService: asi Spring Security sabe como cargar los usuarios
+// implementa UserDetailsService para que Spring sepa como buscar los usuarios al loguear
 @Service
 public class UsuarioService implements UserDetailsService {
 
@@ -23,7 +23,7 @@ public class UsuarioService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // busca el usuario por username y le arma el rol con el prefijo ROLE_
+    // busca el usuario y le pone el rol con el prefijo ROLE_ que pide Spring
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByUsername(username)
@@ -48,7 +48,7 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findById(id).orElse(null);
     }
 
-    // al crear un usuario guardo la password hasheada con BCrypt, nunca en texto plano
+    // al crear el usuario guardo la clave encriptada, nunca como texto plano
     public Usuario crear(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         return usuarioRepository.save(usuario);

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-// logica de "olvide mi contrasena" (bonus)
+// aca esta la logica del "olvide mi contrasena" (bonus)
 @Service
 public class PasswordResetService {
 
@@ -32,9 +32,9 @@ public class PasswordResetService {
     public void solicitarRecuperacion(String email, String baseUrl) {
         Usuario usuario = usuarioService.buscarPorEmail(email);
         if (usuario == null) {
-            return; // si el correo no existe no digo nada, para no filtrar cuentas
+            return; // si el correo no existe no aviso nada, asi no se sabe que cuentas hay
         }
-        // genero un token aleatorio con UUID
+        // genero un codigo al azar con UUID
         String token = UUID.randomUUID().toString();
         tokenRepository.save(new PasswordResetToken(
                 token, usuario, LocalDateTime.now().plusHours(HORAS_VALIDEZ)));
