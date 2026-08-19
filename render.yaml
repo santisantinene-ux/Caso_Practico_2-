@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: biblioapp
+    runtime: docker
+    dockerfilePath: ./biblioapp/Dockerfile
+    dockerContext: ./biblioapp
+    plan: free
+    envVars:
+      - key: DB_URL
+        value: jdbc:mysql://mysql-3a74bb22-biblioapp-db.h.aivencloud.com:26855/defaultdb?useSSL=true&requireSSL=true&verifyServerCertificate=false&serverTimezone=UTC
+      - key: DB_USERNAME
+        value: avnadmin
+      - key: DB_PASSWORD
+        value: AVNS_IN13_XxvvLPhpzGi7VP
+      - key: JWT_SECRET
+        value: biblioapp-jwt-super-secret-render-prod-2025
